@@ -181,35 +181,67 @@ The default generator creates:
 
 ## Estimator architecture
 
+The end-to-end system is shown below at the functional level. A sector-specific
+scan applies eight nulling probes through the programmable analog combiner, and
+the single receiver chain records one scalar power per probe. The hybrid
+estimator maps this power vector and the supplied sector geometry to a physically
+valid upper-hemisphere DoA. Projection-null synthesis then converts the estimated
+jammer directions into analog combining weights for mitigation.
+
 ```mermaid
-flowchart LR
-    P[8 observed powers] --> PRE[log10 p - log10 sum p]
-    P --> SCALE[log10 sum p / noise power]
-    PRE --> A[Geometric anchor MLP]
-    C[8 subsector centers<br/>4-D trig encoding] --> H[Weighted convex hull]
-    A --> H
-    PRE --> OFF[Zero-initialized<br/>learned hull offset]
-    H --> ANCH[Normalized anchor]
-    OFF --> ANCH
-    ANCH --> FGP[4 to 64 projection]
+flowchart TB
+    FIELD["Incident RF field<br/>GNSS signals and jammers"]
 
-    PRE --> PTOK[8 probe tokens]
-    ID[64 global subsector IDs] --> PTOK
-    SCALE --> STOK[Scale token]
-    CLS[Learned CLS token] --> SEQ[10 tokens x 64]
-    STOK --> SEQ
-    PTOK --> SEQ
-    SEQ --> MHA[4-head self-attention]
-    MHA --> RES[Residual + LayerNorm]
-    RES --> READ[CLS readout, 64]
+    subgraph FRONTEND["Analog CRPA measurement front end"]
+        direction LR
+        ARRAY["Four-element<br/>CRPA aperture"]
+        COMBINER["Programmable analog<br/>combining network"]
+        RECEIVER["Single RF<br/>receiver chain"]
+        DETECTOR["Scalar power<br/>detector"]
+        POWERS["Eight-probe power vector<br/>eight non-negative scalars"]
 
-    READ --> CAT[Concatenate: 64 + 64 + 1 = 129]
-    FGP --> CAT
-    SCALE --> CAT
-    CAT --> HEAD[129 to 128 to 64 to 3]
-    HEAD --> OUT[logit cos theta residual<br/>unit-circle azimuth residual]
-    ANCH --> OUT
-    OUT --> DOA[Upper-hemisphere DoA]
+        ARRAY --> COMBINER --> RECEIVER --> DETECTOR --> POWERS
+    end
+
+    CODEBOOK["Sector-specific<br/>eight-null probe codebook"]
+    GEOMETRY["Known coarse sector and<br/>subsector-center geometry"]
+
+    subgraph ESTIMATOR["Physics-informed hybrid DoA estimator"]
+        direction LR
+        ANCHOR["Geometric anchor<br/>differentiable soft argmin"]
+        REFINER["Attention refiner<br/>joint probe comparison"]
+        DOA["Hemisphere-constrained<br/>jammer DoA estimate"]
+
+        ANCHOR --> REFINER --> DOA
+    end
+
+    NULLER["Projection-null<br/>weight synthesis"]
+    OUTPUT["Protected GNSS output<br/>mitigation mode"]
+
+    FIELD --> ARRAY
+    CODEBOOK -. "probe-scan weights" .-> COMBINER
+    POWERS --> ANCHOR
+    GEOMETRY --> ANCHOR
+    DOA --> NULLER
+    NULLER -. "null-steering weights" .-> COMBINER
+    RECEIVER --> OUTPUT
+
+    classDef source fill:#F3F4F6,stroke:#4B5563,color:#111827,stroke-width:1.5px;
+    classDef frontend fill:#E8F1FB,stroke:#2563EB,color:#111827,stroke-width:1.5px;
+    classDef knowledge fill:#FFF4D6,stroke:#B7791F,color:#111827,stroke-width:1.5px;
+    classDef estimator fill:#E7F6EC,stroke:#238636,color:#111827,stroke-width:1.5px;
+    classDef mitigation fill:#FDECEC,stroke:#C2413B,color:#111827,stroke-width:1.5px;
+    classDef output fill:#EEEAFE,stroke:#6D4AFF,color:#111827,stroke-width:1.5px;
+
+    class FIELD source;
+    class ARRAY,COMBINER,RECEIVER,DETECTOR,POWERS frontend;
+    class CODEBOOK,GEOMETRY knowledge;
+    class ANCHOR,REFINER,DOA estimator;
+    class NULLER mitigation;
+    class OUTPUT output;
+
+    style FRONTEND fill:#F8FBFF,stroke:#8BB8E8,stroke-width:1px;
+    style ESTIMATOR fill:#F7FCF8,stroke:#8BCB98,stroke-width:1px;
 ```
 
 ### Exact modules
