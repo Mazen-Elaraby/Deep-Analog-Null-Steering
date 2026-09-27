@@ -28,8 +28,8 @@ The proposed estimator maps those eight powers and the known coarse sector direc
 | Property | Value |
 |---|---:|
 | Elements | 4 |
-| Geometry | Corners of a 6 cm square in the \(z=0\) plane |
-| Circumradius | 42.4 mm = \(0.224\lambda\) at 1580 MHz |
+| Geometry | Corners of a 6 cm square in the $z=0$ plane |
+| Circumradius | 42.4 mm = $0.224\lambda$ at 1580 MHz |
 | Design frequency | 1580 MHz |
 | Receiver chains | 1 |
 | Coarse sectors | 8: four azimuth quadrants × two elevation bands |
@@ -41,11 +41,11 @@ The proposed estimator maps those eight powers and the known coarse sector direc
 
 The effective steering vector uses a distinct complex full-wave pattern for every element,
 
-\[
+$$
 \mathbf u(\theta,\phi)
 = \left[E_n(\theta,\phi)
    e^{j\mathbf k(\theta,\phi)^T\mathbf r_n}\right]_{n=1}^{4}.
-\]
+$$
 
 The supplied 1580 MHz pattern CSVs are interpolated onto a 1° grid by `evaluation/crpa_physics.py`. The additional 1230 MHz files are included as reference data but are not used by the reported experiments.
 
@@ -53,11 +53,11 @@ The supplied 1580 MHz pattern CSVs are interpolated onto a 1° grid by `evaluati
 
 The v2 generator uses the **design-intent null codebook** from `data/sector_data_8sect.mat`. A row weight is applied using the ordinary transpose,
 
-\[
+$$
 s_m=\mathbf w_m^T\mathbf u,
-\]
+$$
 
-not \(\mathbf w_m^H\mathbf u\). Conjugating the weight relocates the null. Because each v2 probe places a notch at its own subsector center, the informative reading is the **minimum**, not the maximum. Dataset validation reports:
+not $\mathbf w_m^H\mathbf u$. Conjugating the weight relocates the null. Because each v2 probe places a notch at its own subsector center, the informative reading is the **minimum**, not the maximum. Dataset validation reports:
 
 - median on-center dip: **90.49 dB**;
 - exact occupied-subsector recovery by raw `argmin`: **70.0%**, versus 12.5% chance;
@@ -71,59 +71,59 @@ These values come from `data/VALIDATION_v2.txt`. The trained anchor independentl
 
 For mutually incoherent jammers,
 
-\[
+$$
 \mathbf R = \sum_{j=1}^{J}P_j\mathbf u_j\mathbf u_j^H
             +\sigma_n^2\mathbf I_4.
-\]
+$$
 
-The mean power from probe \(m\) can be written as
+The mean power from probe $m$ can be written as
 
-\[
+$$
 \bar p_m
 =\mathbf v_m^H\mathbf R\mathbf v_m
 =\left\langle\mathbf R,\mathbf v_m\mathbf v_m^H\right\rangle,
 \qquad \mathbf v_m=\overline{\mathbf w_m}.
-\]
+$$
 
-Every probe is therefore a linear functional of a \(4\times4\) Hermitian matrix. Such a matrix has at most
+Every probe is therefore a linear functional of a $4\times4$ Hermitian matrix. Such a matrix has at most
 
-\[
+$$
 \dim_{\mathbb R}(\mathbf R)=N^2=16
-\]
+$$
 
 real degrees of freedom. Adding probes can improve averaging and conditioning, but cannot create a seventeenth observable covariance dimension.
 
-A scene with \(J\) incoherent jammers has two angles and one power per jammer, plus the noise level: \(3J+1\) real unknowns. A necessary dimensional condition for joint identifiability is consequently
+A scene with $J$ incoherent jammers has two angles and one power per jammer, plus the noise level: $3J+1$ real unknowns. A necessary dimensional condition for joint identifiability is consequently
 
-\[
+$$
 3J+1\le16 \quad\Longrightarrow\quad J\le5.
-\]
+$$
 
-This is an algebraic ceiling, not a claim that five jammers are practically resolvable on this aperture. The measured conditioning is already poor at \(J=3\).
+This is an algebraic ceiling, not a claim that five jammers are practically resolvable on this aperture. The measured conditioning is already poor at $J=3$.
 
 ### Why full-wave pattern diversity matters
 
-If all four elements are assigned one common isotropic pattern, the accessible covariance structure collapses to nine real dimensions, giving the stricter count \(3J+1\le9\), or \(J\le2\). The four distinct mounted-element patterns break this idealized degeneracy and restore the 16-dimensional count. Pattern diversity is therefore part of the information model, not a cosmetic simulation detail.
+If all four elements are assigned one common isotropic pattern, the accessible covariance structure collapses to nine real dimensions, giving the stricter count $3J+1\le9$, or $J\le2$. The four distinct mounted-element patterns break this idealized degeneracy and restore the 16-dimensional count. Pattern diversity is therefore part of the information model, not a cosmetic simulation detail.
 
 ### Fisher bound and conditioning
 
 The implementation uses the parameter vector
 
-\[
+$$
 \boldsymbol\eta=
 [\theta_1,\phi_1,\ln P_1,\ldots,\theta_J,\phi_J,\ln P_J,
 \ln\sigma_n^2]^T
-\]
+$$
 
-and marginalizes unknown powers, noise level, and other jammer directions through a Schur complement. The angular bound is converted to the spherical arc metric with the required \(\sin^2\theta\) factor on azimuth variance.
+and marginalizes unknown powers, noise level, and other jammer directions through a Schur complement. The angular bound is converted to the spherical arc metric with the required $\sin^2\theta$ factor on azimuth variance.
 
 The repository reports the diagonally scaled condition number
 
-\[
+$$
 \kappa_{\mathrm{corr}}=
 \kappa\!\left(\mathbf D^{-1/2}\mathbf F\mathbf D^{-1/2}\right),
 \qquad \mathbf D=\operatorname{diag}(\mathbf F),
-\]
+$$
 
 rather than the raw FIM condition number. The raw value is dominated by parameter units—especially the noise-floor nuisance column—and is not a useful geometry metric.
 
@@ -137,26 +137,26 @@ Across 1,008 fixed directions, bias grows from 1.217° to 5.470° between condit
 
 The observed probe power is
 
-\[
+$$
 p_m=\bar p_m\left(1+\frac{\zeta_m}{\sqrt K}\right)+\varepsilon_m,
 \qquad \zeta_m\sim\mathcal N(0,1),
-\]
+$$
 
-\[
+$$
 \varepsilon_m\sim\mathcal N\!\left(0,\alpha\bar p^2\right),
 \qquad
 \bar p=\frac{1}{8}\sum_{m=1}^{8}\bar p_m,
-\]
+$$
 
-with \(K=10^6\) and \(\alpha=10^{-3.5}=3.162\times10^{-4}\). Readings are floored at \(10^{-6}\bar p\) to model a non-negative detector and keep logarithmic preprocessing finite.
+with $K=10^6$ and $\alpha=10^{-3.5}=3.162\times10^{-4}$. Readings are floored at $10^{-6}\bar p$ to model a non-negative detector and keep logarithmic preprocessing finite.
 
-The snapshot term cannot be discarded merely because \(K\alpha\gg1\); its ratio to the detector variance is
+The snapshot term cannot be discarded merely because $K\alpha\gg1$; its ratio to the detector variance is
 
-\[
+$$
 \frac{1}{K\alpha}\left(\frac{\bar p_m}{\bar p}\right)^2,
-\]
+$$
 
-so probe dynamic range matters. The archived verification finds a worst-probe ratio of 0.027 at \(K=10^6\). A complete eight-probe scan corresponds to about 0.40 s at an illustrative 20 MHz sampling rate; inference is small compared with acquisition latency.
+so probe dynamic range matters. The archived verification finds a worst-probe ratio of 0.027 at $K=10^6$. A complete eight-probe scan corresponds to about 0.40 s at an illustrative 20 MHz sampling rate; inference is small compared with acquisition latency.
 
 ### Scene sampling
 
@@ -233,10 +233,10 @@ flowchart LR
 
 The anchor forms a convex combination of the eight center encodings
 
-\[
+$$
 \mathbf g_0=\sum_{m=1}^{8}a_m
 [\cos\theta_m,\sin\theta_m,\cos\phi_m,\sin\phi_m]^T.
-\]
+$$
 
 The learned offset permits departure from this convex hull and is zero-initialized so training begins at the pure geometric anchor. Phase 5 shows that the hull-only anchor already reaches 10.120° median error; the offset changes this to 9.726°, while the full refiner reaches 3.717°. The offset removes a structural restriction but is nearly neutral in measured accuracy.
 
@@ -248,18 +248,18 @@ The attention heads have only 0.000–0.001 nats of measured entropy (uniform ov
 
 ### Upper hemisphere by construction
 
-Elevation is corrected in the logit of \(\cos\theta\):
+Elevation is corrected in the logit of $\cos\theta$:
 
-\[
+$$
 \cos\hat\theta=
 \sigma\!\left(\operatorname{logit}(\cos\theta_g)+\Delta_\theta\right),
-\]
+$$
 
-which guarantees \(0<\hat\theta<90^\circ\). Azimuth is represented and corrected on the unit circle. There is no post-hoc folding or clipping of predicted angles in the model; a small internal clamp protects the anchor value before applying `logit`, and the presentation decoder maps `atan2` to \([0,360^\circ)\).
+which guarantees $0<\hat\theta<90^\circ$. Azimuth is represented and corrected on the unit circle. There is no post-hoc folding or clipping of predicted angles in the model; a small internal clamp protects the anchor value before applying `logit`, and the presentation decoder maps `atan2` to $[0,360^\circ)$.
 
 ## Training
 
-`training/train_v2.py` expands every scene into one example per active jammer. Query \(q\) uses that jammer's sector probe vector as input and its DoA as supervision, while the power vector includes leakage from all other jammers.
+`training/train_v2.py` expands every scene into one example per active jammer. Query $q$ uses that jammer's sector probe vector as input and its DoA as supervision, while the power vector includes leakage from all other jammers.
 
 Preprocessing is
 
@@ -276,9 +276,9 @@ The split is performed by original **scene**, not by expanded query, preventing 
 |---|---:|
 | Loss | Mean squared error on the four trigonometric outputs |
 | Optimizer | AdamW |
-| Learning rate | \(10^{-2}\) |
-| Weight decay | \(10^{-4}\) |
-| Scheduler | ExponentialLR, \(\gamma=0.87\) |
+| Learning rate | $10^{-2}$ |
+| Weight decay | $10^{-4}$ |
+| Scheduler | ExponentialLR, $\gamma=0.87$ |
 | Optional scheduler | ReduceLROnPlateau, patience 2, factor 0.5 |
 | Epochs | 50 |
 | Batch size | 256 |
@@ -303,29 +303,29 @@ All values below are transcribed from files under `evaluation_results/`, plus `e
 | Azimuth error, median / P90 | 2.163° / 6.462° | 10,000 scenes |
 | JSR, median | **27.71 dB** | 4,000 scenes |
 | JSR, P10 / P90 | 19.77 / 37.71 dB | 4,000 scenes |
-| \(P(\mathrm{JSR}\ge10\,\mathrm{dB})\) | 98.6% | 4,000 scenes |
-| \(P(\mathrm{JSR}\ge20\,\mathrm{dB})\) | **89.3%** | 4,000 scenes |
-| \(P(\mathrm{JSR}\ge30\,\mathrm{dB})\) | 37.3% | 4,000 scenes |
+| $P(\mathrm{JSR}\ge10\,\mathrm{dB})$ | 98.6% | 4,000 scenes |
+| $P(\mathrm{JSR}\ge20\,\mathrm{dB})$ | **89.3%** | 4,000 scenes |
+| $P(\mathrm{JSR}\ge30\,\mathrm{dB})$ | 37.3% | 4,000 scenes |
 
-The broad null from a \(0.224\lambda\) aperture tolerates several degrees of DoA error: median JSR is 34.24 dB for errors no larger than 1°, and 28.21 dB for errors no larger than 5°.
+The broad null from a $0.224\lambda$ aperture tolerates several degrees of DoA error: median JSR is 34.24 dB for errors no larger than 1°, and 28.21 dB for errors no larger than 5°.
 
 ### Scaling with jammer count
 
 Errors are reported per jammer. Each scene uses one eight-probe query per jammer, and multi-jammer predictions are evaluated both directly and with Hungarian matching where set recovery is the question.
 
-| \(J\) | Parameters \(3J+1\) | Probe readings | \(\kappa_{\mathrm{corr}}\), median | Arc CRLB, median | Error P50 | Error P90 | Error RMSE |
+| $J$ | Parameters $3J+1$ | Probe readings | $\kappa_{\mathrm{corr}}$, median | Arc CRLB, median | Error P50 | Error P90 | Error RMSE |
 |---:|---:|---:|---:|---:|---:|---:|---:|
-| 1 | 4 | 8 | \(2.450\times10^3\) | 5.793° | 3.72° | 12.84° | 7.072° |
-| 2 | 7 | 16 | \(1.705\times10^4\) | 28.918° | 11.86° | 29.49° | 18.015° |
-| 3 | 10 | 24 | \(1.089\times10^5\) | 49.969° | 15.26° | 34.27° | 21.348° |
+| 1 | 4 | 8 | $2.450\times10^3$ | 5.793° | 3.72° | 12.84° | 7.072° |
+| 2 | 7 | 16 | $1.705\times10^4$ | 28.918° | 11.86° | 29.49° | 18.015° |
+| 3 | 10 | 24 | $1.089\times10^5$ | 49.969° | 15.26° | 34.27° | 21.348° |
 
 From one to three jammers, scaled FIM conditioning degrades **44.4×** and the median bound grows **8.63×**, while network RMSE grows **3.02×**. The smaller error growth is not increasing efficiency: it is the biased estimator falling back toward its sector prior as the measurement becomes uninformative.
 
-For three jammers, all three estimates satisfy the \(\Delta_{\min}/3\) resolution criterion in 14.0% of scenes. Joint nulling over 2,000 scenes provides 7.93 dB median JSR and 9.91 dB mean JSR. Three nulls also consume three of a four-element array's spatial degrees of freedom, so this is a feasibility result rather than a recommended operating point.
+For three jammers, all three estimates satisfy the $\Delta_{\min}/3$ resolution criterion in 14.0% of scenes. Joint nulling over 2,000 scenes provides 7.93 dB median JSR and 9.91 dB mean JSR. Three nulls also consume three of a four-element array's spatial degrees of freedom, so this is a feasibility result rather than a recommended operating point.
 
 ### Two-jammer resolvability
 
-A pair is counted as resolved when both Hungarian-matched estimates lie within one third of the true pair separation \(\Delta\). Across 10,000 scenes:
+A pair is counted as resolved when both Hungarian-matched estimates lie within one third of the true pair separation $\Delta$. Across 10,000 scenes:
 
 - overall resolution: **62.1%**;
 - query/truth swaps: **0.2%**;
@@ -344,14 +344,14 @@ A pair is counted as resolved when both Hungarian-matched estimates lie within o
 
 | Power-disparity subset | Scenes | Resolved |
 |---|---:|---:|
-| \(|\Delta\mathrm{JNR}|\le5\) dB | 3,073 | 65.1% |
-| \(|\Delta\mathrm{JNR}|>15\) dB | 2,560 | 57.4% |
+| $\lvert\Delta\mathrm{JNR}\rvert\le5$ dB | 3,073 | 65.1% |
+| $\lvert\Delta\mathrm{JNR}\rvert>15$ dB | 2,560 | 57.4% |
 
 Separation is the stronger determinant of pair resolution. Power disparity remains important operationally because the weak target is localized and nulled much less accurately.
 
 ### Two-jammer dynamic range
 
-For signed \(\Delta\mathrm{JNR}=\mathrm{JNR}_{target}-\mathrm{JNR}_{interferer}\):
+For signed $\Delta\mathrm{JNR}=\mathrm{JNR}_{\mathrm{target}}-\mathrm{JNR}_{\mathrm{interferer}}$:
 
 | Target-minus-interferer JNR | P50 error | RMSE | P90 error |
 |---:|---:|---:|---:|
@@ -371,7 +371,7 @@ The fixed-direction experiment uses 21 zenith rings × 48 azimuth spokes = **1,0
 
 | Quantity | All directions | Well-conditioned half | Ill-conditioned half |
 |---|---:|---:|---:|
-| Median \(|\mathrm{bias}|\) | 1.994° | 1.217° | 5.470° |
+| Median $\lvert\mathrm{bias}\rvert$ | 1.994° | 1.217° | 5.470° |
 | Median scatter | 1.575° | 1.540° | 1.642° |
 | RMSE | — | 3.812° | 7.775° |
 | Median bias fraction | 0.645 | 0.415 | 0.894 |
@@ -582,7 +582,7 @@ Measured manuscript values are bound manually in `manuscript/macros.tex`; evalua
 
 ## Implementation notes and limitations
 
-1. **Known sector and jammer count.** Every reported query is conditioned on the correct coarse sector and fixed \(J\). Acquisition/model-order selection remain future work.
+1. **Known sector and jammer count.** Every reported query is conditioned on the correct coarse sector and fixed $J$. Acquisition/model-order selection remain future work.
 2. **Dynamic range is the dominant failure mode.** A weak jammer more than roughly 15 dB below another falls back to sector-scale accuracy.
 3. **Pattern model, not hardware validation.** Full-wave files include coupling and mounted-element diversity as simulated, but not manufacturing and calibration errors measured on hardware.
 4. **One attention block.** The model is not a stacked Transformer encoder and has no attention FFN sublayer. A heteroscedastic uncertainty head is also not implemented.
