@@ -1,0 +1,49 @@
+======================================================================
+FIM CONDITIONING vs DEGREES OF FREEDOM (1J / 2J / 3J)
+======================================================================
+
+4 elements -> R = u u^H carries 4^2 = 16 real degrees of freedom.
+Every probe power is a linear functional of R, so the probe
+powers span at most 16 real dimensions no matter how many
+probes are read. That is a property of the antenna, not of the
+algorithm.
+
+Identifiability needs 3J + 1 <= 16, hence J <= 5.
+
+   J  params  probes    budget  kappa_corr   kappa_raw   CRLB med   net RMSE   ratio   bad
+  ------------------------------------------------------------------------------------------------
+   1       4       8      4/16   2.450e+03   5.339e+18      5.793      7.072    1.22     0
+   2       7      16      7/16   1.705e+04   5.680e+21     28.918     18.015    0.62     0
+   3      10      24     10/16   1.089e+05   1.200e+23     49.969     21.348    0.43     0
+
+  300 scenes per row; CRLB and RMSE in degrees of arc.
+  kappa_corr = condition number after symmetric diagonal scaling,
+    which is the scale-invariant one and the only one plotted.
+  kappa_raw  = condition number of the unscaled FIM. It sits near
+    1e18 at EVERY J because the noise-floor nuisance column is
+    ~1e-4 of the jammer-power columns at these JNRs, so it
+    measures units, not observability. Shown only to document
+    that it was examined and rejected as a metric.
+  'bad' counts jammers whose marginalised CRLB was non-finite.
+
+----------------------------------------------------------------------
+READING
+----------------------------------------------------------------------
+  1J -> 3J: FIM conditioning degrades 44.4x (scaled kappa 2.45e+03 -> 1.09e+05)
+  1J -> 3J: the CRLB rises 8.63x (5.793 -> 49.969 deg)
+  1J -> 3J: the network RMSE rises 3.02x (7.072 -> 21.348 deg)
+  1J -> 3J: RMSE/CRLB goes 1.22 -> 0.43
+
+  The network moves CLOSER to the bound as jammers are added,
+  so the 3J degradation cannot be attributed to the estimator:
+  the information available to ANY estimator degraded faster
+  than the network's performance did.
+
+  At J = 3, 10 of 16 observable dimensions are
+  spent, so the scene is close to the identifiability edge of a
+  4-element aperture (J <= 5). Recovering the 3J
+  case needs more elements or more independent looks, not a
+  better read-out of the same 8 numbers.
+
+figures
+  wrote phase3j/phase3j_conditioning_vs_dof.pdf and .png

@@ -1,0 +1,26 @@
+======================================================================
+THREE-JAMMER BASIC RESULTS
+======================================================================
+Reported for completeness. J=3 is identifiable on the measured
+manifold but ill-conditioned; see the caveat at the end.
+
+          case        n      p50      p90     RMSE
+      1 jammer   10,000     3.72    12.84     7.07
+      2 jammer   20,000    11.86    29.49    18.01
+      3 jammer   30,000    15.26    34.27    21.35
+
+  3J resolution (all three within Delta_min/3): 14.0%
+  median closest-pair separation: 48.9 deg
+
+  3J joint nulling over 2,000 samples (0 degenerate)
+    mean JSR 9.91 dB, median 7.93 dB
+    P(JSR >= 10 dB) = 43.2%
+    Note: 3 nulls from a 4-element array leaves a single degree of
+    freedom, so even exact DoAs would give limited quiescent gain.
+
+  CAVEAT
+  Degradation from J=2 to J=3 is not evidence of an estimator
+  deficiency. Ten of the sixteen available real observables are
+  consumed at J=3 and the FIM is badly scaled, so the accuracy
+  ceiling is set by the array. Treat these as feasibility numbers.
+  wrote phase3j/phase3j_summary.pdf and .png

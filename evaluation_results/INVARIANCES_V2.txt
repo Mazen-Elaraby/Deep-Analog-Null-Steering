@@ -1,0 +1,42 @@
+========================================================================
+V2 INVARIANCE RE-CHECK
+========================================================================
+
+1a) Branch A SOFTMAX under an affine rescale a*p + b
+    LayerNorm(8) is still the first layer, so this should stay invariant
+    a= 1.00 b= 0.00  max|dw| = 0.000e+00  softmax=[1.9830e-03 1.3126e-02 3.9455e-04 7.9293e-20 5.9728e-02 9.2477e-01
+ 8.8332e-31 2.0151e-13]
+    a= 1.00 b= 3.00  max|dw| = 2.980e-07  softmax=[1.9830e-03 1.3126e-02 3.9455e-04 7.9294e-20 5.9729e-02 9.2477e-01
+ 8.8333e-31 2.0152e-13]
+    a= 0.25 b= 0.00  max|dw| = 3.746e-04  softmax=[1.9934e-03 1.3220e-02 3.9792e-04 8.3213e-20 5.9995e-02 9.2439e-01
+ 9.5550e-31 2.1004e-13]
+    a= 4.00 b=-2.00  max|dw| = 2.325e-05  softmax=[1.9823e-03 1.3120e-02 3.9434e-04 7.9055e-20 5.9712e-02 9.2479e-01
+ 8.7900e-31 2.0099e-13]
+
+1b) Branch A ANCHOR (softmax hull + hull_offset) under the same rescale
+    Rec #6 adds a path that reads powers directly, so this should MOVE
+    a= 1.00 b= 0.00  max|d anchor| = 0.000e+00
+    a= 1.00 b= 3.00  max|d anchor| = 1.694e+00
+    a= 0.25 b= 0.00  max|d anchor| = 7.450e-01
+    a= 4.00 b=-2.00  max|d anchor| = 3.386e-02
+
+2) Full network output under a change of ABSOLUTE jammer power
+   Rec #2 feeds log_scale as its own token, so this should MOVE
+   power gain x1         max|do| = 0.000e+00  out=[ 1.442264e-06  1.000000e+00 -9.946816e-01  1.029973e-01]
+   power gain x10        max|do| = 3.371e-03  out=[ 1.498476e-06  1.000000e+00 -9.943268e-01  1.063680e-01]
+   power gain x1000      max|do| = 1.478e-02  out=[ 1.605724e-06  1.000000e+00 -9.930403e-01  1.177752e-01]
+   power gain x1e+06     max|do| = 5.199e-02  out=[ 1.744141e-06  1.000000e+00 -9.879169e-01  1.549846e-01]
+
+========================================================================
+VERDICT
+========================================================================
+  claim 1 at the softmax : STILL HOLDS (invariant)
+  claim 1 at the anchor  : BROKEN by rec #6
+  claim 2 (absolute JNR) : BROKEN by rec #2
+
+  As designed. The LayerNorm contrast blindness is intrinsic to the
+  softmax and was never removed; rec #6 routes around it rather than
+  repairing it. The anchor is no longer confined to the convex hull
+  of the subsector centres, which is what produced v1's fixed-point
+  floor, so the operative failure mode is gone. Worth stating
+  precisely in the paper: the invariance is bypassed, not fixed.

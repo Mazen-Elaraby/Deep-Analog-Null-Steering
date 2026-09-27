@@ -1,0 +1,43 @@
+======================================================================
+SPATIAL BIAS / VARIANCE DECOMPOSITION (1 JAMMER)
+======================================================================
+grid: 21 zenith rings x 48 azimuth spokes, 96 noise trials each, JNR 35 dB
+the DoA is held fixed within a direction, so MSE = |bias|^2 + scatter^2 exactly
+
+  1,008 directions x 96 trials = 96,768 queries
+
+  median |bias|   1.994 deg
+  median scatter  1.575 deg
+  median RMSE     2.956 deg
+  median bias fraction 0.645   (1.0 = purely systematic, 0.0 = purely random)
+  -> the error is predominantly SYSTEMATIC
+
+  split at the median CRLB (1.985 deg):
+                half     RMSE   |bias|   scatter  bias frac  RMSE/CRLB
+    well-conditioned    3.812    1.217     1.540      0.415       3.19
+     ill-conditioned    7.775    5.470     1.642      0.894       0.68
+
+  directions with RMSE below their own CRLB: 268/1008 (26.6%)
+    their median bias fraction 0.884  vs 0.508 for the rest
+    A genuinely unbiased estimator cannot sit below the bound,
+    so this is the regularised estimator trading bias for
+    variance where the geometry carries little information.
+
+  bias direction vs the bearing to the sector centre:
+    magnitude-weighted mean cos  +0.536  (+1 = straight at the centre, 0 = unrelated)
+    magnitude-weighted P(points inward) 0.836
+    unweighted P(points inward) 0.712
+    -> the bias points TOWARD the sector centre -> the anchor's fallback is being exercised
+
+  by zenith band:
+      theta band     n   |bias|   scatter     CRLB  RMSE/CRLB
+        0-20 deg   192    1.767     1.539    1.011       4.74
+       20-40 deg   240    1.053     1.367    0.958       2.00
+       40-60 deg   240    1.562     2.322    2.263       1.45
+       60-75 deg   192    7.549     1.312    9.296       0.70
+       75-90 deg   144    6.110     1.379   11.693       0.56
+    The theta = 60 deg line is a sector boundary, so a jump across
+    it is the partition showing through, not a property of the sky.
+
+figures
+  wrote phase1/phase1_bias_variance.pdf and .png

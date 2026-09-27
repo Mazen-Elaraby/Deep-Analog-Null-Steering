@@ -1,0 +1,319 @@
+%==============================================================================
+% macros.tex -- single binding point for every measured number in the paper.
+%
+% RULE: no numeric literal appears in main.tex prose if it is a measured
+% quantity. Bind it here, with its artifact of origin in the comment, and use
+% the macro. If an evaluation is re-run, this file is the only thing to edit.
+%
+% Artifact paths are relative to paper_model_workspace_v2/.
+%   VAL  = data/VALIDATION_v2.txt
+%   CRBV = evaluation/CRLB_V2_VERIFICATION.txt      <- note: evaluation/, not
+%                                                      evaluation_results/
+%   COND = evaluation_results/CONDITIONING_VS_DOF.txt
+%   PH1  = evaluation_results/PHASE1_V2.txt
+%   PH1BV= evaluation_results/PHASE1_BIAS_VARIANCE_V2.txt
+%   PH2  = evaluation_results/PHASE2_V2.txt
+%   PH3J = evaluation_results/PHASE3J_V2.txt
+%   PH35 = evaluation_results/PHASE3_5_V2.txt
+%   PH4  = evaluation_results/PHASE4_V2.txt
+%   PH5  = evaluation_results/PHASE5_V2.txt
+%==============================================================================
+
+% ---- array and partition (crpa_physics.py) ----------------------------------
+\newcommand{\numElem}{4}
+\newcommand{\arraySide}{6}                      % cm, square side
+\newcommand{\numProbes}{8}
+\newcommand{\numSectors}{8}
+\newcommand{\numSubsectors}{64}
+\newcommand{\freqZero}{1580}                    % MHz
+\newcommand{\apertureLambda}{0.224}             % circumradius / lambda
+\newcommand{\noiseDbm}{-114}                    % dBm per element
+\newcommand{\noiseWatt}{3.981\times10^{-15}}    % W
+\newcommand{\elevSplit}{60}                     % deg, equal-solid-angle split
+
+% ---- generator settings (generate_dataset_v2.py; confirmed in VAL L2) --------
+\newcommand{\alphaVal}{3.162\times10^{-4}}      % alpha = 10^-3.5
+\newcommand{\Ksnap}{10^{6}}                     % n_snapshots
+\newcommand{\jnrLo}{20}                         % dB
+\newcommand{\jnrHi}{50}                         % dB
+
+% ---- codebook behaviour (VAL checks 3, 4, 5) --------------------------------
+\newcommand{\nullDepthMed}{90.49}               % dB, VAL L13
+\newcommand{\nullDepthPten}{88.36}              % dB, VAL L13
+\newcommand{\argminExact}{70.0}                 % %,  VAL L18
+\newcommand{\argminTwo}{94.5}                   % %,  VAL L18
+\newcommand{\chanceExact}{12.5}                 % %,  VAL L19
+\newcommand{\chanceTwo}{25.0}                   % %,  VAL L19
+\newcommand{\contrastOneJ}{20.3}                % dB, VAL L23
+\newcommand{\contrastTwoJ}{6.9}                 % dB, VAL L24
+\newcommand{\contrastThreeJ}{4.8}               % dB, VAL L25
+
+% ---- observability ceiling (COND L5-11) -------------------------------------
+\newcommand{\dObs}{16}                          % N^2 real dimensions
+\newcommand{\dObsIdeal}{9}                      % common-element-pattern case
+\newcommand{\jIdent}{5}                         % 3J + 1 <= 16
+\newcommand{\jIdentIdeal}{2}                    % 3J + 1 <= 9
+\newcommand{\dSpentThreeJ}{10}                  % COND L42
+
+% ---- bound machinery (crlb_v2.py) -------------------------------------------
+\newcommand{\condLimit}{10^{12}}                % cond_limit guard
+
+% ---- bound verification (CRBV) ----------------------------------------------
+\newcommand{\simpRatio}{0.999}                  % CRBV [2], all JNRs
+\newcommand{\fcovRatio}{1.000}                  % CRBV [3], all JNRs
+\newcommand{\snapWorst}{0.027}                  % CRBV [1] worst probe
+\newcommand{\snapKneed}{5.4\times10^{5}}        % CRBV [1] for ratio < 0.05
+\newcommand{\probeDynRange}{2.91}               % CRBV [1] max pbar_m / pbar
+\newcommand{\KoldRatio}{0.386}                  % crlb_v2.py docstring, K=8192
+\newcommand{\KoldThresh}{1.6}                   % pbar_m/pbar at which it hits 1
+\newcommand{\Kold}{8192}
+\newcommand{\mcLo}{0.901}                       % CRBV [4] 20 dB
+\newcommand{\mcMid}{0.926}                      % CRBV [4] 35 dB
+\newcommand{\mcHi}{0.898}                       % CRBV [4] 50 dB
+\newcommand{\mcTrials}{800}                     % CRBV [4] n
+\newcommand{\jnrFlatSpread}{0.000}              % dB, CRBV [5]
+
+% ---- weak-jammer law (CRBV [6]) ---------------------------------------------
+\newcommand{\weakSlopeMean}{-0.850}             % dB/dB, mean over delta 5-25
+\newcommand{\weakSlopePred}{-1.000}             % dB/dB, known-nuisance law
+\newcommand{\weakSlopeFirst}{-0.561}            % delta = 5 dB
+\newcommand{\weakSlopeLast}{-0.992}             % delta = 25 dB
+\newcommand{\weakCRBnear}{4.633}                % deg, delta = 0
+\newcommand{\weakCRBfar}{617.99}                % deg, delta = 25 dB
+\newcommand{\weakStrongJnr}{45}                 % dB, strong jammer held here
+
+% ---- conditioning vs DOF (COND L15-17, L32-35) ------------------------------
+\newcommand{\kappaOneJ}{2.450\times10^{3}}
+\newcommand{\kappaTwoJ}{1.705\times10^{4}}
+\newcommand{\kappaThreeJ}{1.089\times10^{5}}
+\newcommand{\kappaGrowth}{44.4}                 % x, 1J -> 3J
+\newcommand{\kappaRawOneJ}{5.339\times10^{18}}  % units artifact, do not quote
+\newcommand{\crbMedOneJ}{5.793}                 % deg
+\newcommand{\crbMedTwoJ}{28.918}                % deg
+\newcommand{\crbMedThreeJ}{49.969}              % deg
+\newcommand{\crbGrowth}{8.63}                   % x, 1J -> 3J
+\newcommand{\scenesPerRow}{300}
+\newcommand{\scenesTotal}{900}
+\newcommand{\nBad}{0}                           % non-finite marginalised CRBs
+
+% ---- single-jammer accuracy (PH1) -- used in the Results section ------------
+% Kept here so Results transcribes from one place. NOTE: PH1's CRLB median
+% (5.020 deg, 1,500 draws) is a DIFFERENT experiment from COND's J=1 row
+% (5.793 deg, 300 scenes). They must not be conflated.
+\newcommand{\netArcPfifty}{3.717}               % deg, PH1 L5
+\newcommand{\netArcPninety}{12.843}             % deg, PH1 L5
+\newcommand{\netArcRmse}{7.072}                 % deg, PH1 L5
+\newcommand{\crbPhaseOneMed}{5.020}             % deg, PH1 L11
+\newcommand{\effWell}{1.93}                     % x, PH1 L16
+\newcommand{\effIll}{0.70}                      % x, PH1 L18
+\newcommand{\netRmseGrowth}{3.02}               % x, COND L34, Results only
+
+% ---- estimator architecture (models/model_builder_v2.py) --------------------
+\newcommand{\modelParams}{52{,}575}             % total trainable parameters
+\newcommand{\embedDim}{64}                      % embed_dim
+\newcommand{\numHeads}{4}                       % nn.MultiheadAttention heads
+\newcommand{\numTokens}{10}                     % CLS + SCALE + 8 probes
+\newcommand{\centerDim}{4}                      % center_dim: cos/sin th, cos/sin ph
+\newcommand{\corrWidth}{129}                    % 2*embed_dim + 1
+
+% ---- Phase 1, RANDOM-DoA sweep (PH1) ---------------------------------------
+% 10,000 scenes, DoA redrawn every scene. Separate experiment from PH1BV below.
+\newcommand{\phOneN}{10{,}000}                  % PH1 L4
+\newcommand{\netZenPfifty}{3.140}               % deg, PH1 L6
+\newcommand{\netZenPninety}{11.478}             % deg, PH1 L6
+\newcommand{\netAziPfifty}{2.163}               % deg, PH1 L7
+\newcommand{\netAziPninety}{6.462}              % deg, PH1 L7
+\newcommand{\thetaPredLo}{6.62}                 % deg, PH1 L8, no folding needed
+\newcommand{\thetaPredHi}{85.83}                % deg, PH1 L8
+\newcommand{\crbNbounds}{1{,}500}               % PH1 L11
+\newcommand{\crbPhaseOnePten}{0.920}            % deg, PH1 L11
+\newcommand{\crbPhaseOnePninety}{15.130}        % deg, PH1 L11
+\newcommand{\crbRms}{9.464}                     % deg, PH1 L12, quadrature
+\newcommand{\effAgg}{0.75}                      % x, PH1 L13, aggregate
+\newcommand{\effWellRmse}{3.932}                % deg, PH1 L16
+\newcommand{\effWellCrb}{2.040}                 % deg, PH1 L16
+\newcommand{\effIllRmse}{9.234}                 % deg, PH1 L18
+\newcommand{\effIllCrb}{13.228}                 % deg, PH1 L18
+\newcommand{\crbJnrLo}{6.059}                   % deg, PH1 L20, JNR < 30
+\newcommand{\crbJnrHi}{5.831}                   % deg, PH1 L21, JNR > 40
+\newcommand{\netRmseJnrLo}{7.240}               % deg, PH1 L22
+\newcommand{\netRmseJnrHi}{7.114}               % deg, PH1 L22
+
+% ---- Phase 1, FIXED-DoA bias/variance (PH1BV) -------------------------------
+% PH1BV = evaluation_results/PHASE1_BIAS_VARIANCE_V2.txt
+% DISTINCT EXPERIMENT from PH1. The DoA is held fixed within a direction, so
+% MSE = |bias|^2 + scatter^2 holds exactly. Its conditioning split is
+% 3.19x / 0.68x -- NOT the 1.93x / 0.70x of the random-DoA sweep. Never mix.
+\newcommand{\fdRings}{21}                       % PH1BV L4, zenith rings
+\newcommand{\fdSpokes}{48}                      % PH1BV L4, azimuth spokes
+\newcommand{\fdTrials}{96}                      % PH1BV L4, noise trials each
+\newcommand{\fdJnr}{35}                         % dB, PH1BV L4
+\newcommand{\fdDirs}{1{,}008}                   % PH1BV L7
+\newcommand{\fdQueries}{96{,}768}               % PH1BV L7
+\newcommand{\fdBiasMed}{1.994}                  % deg, PH1BV L9
+\newcommand{\fdScatMed}{1.575}                  % deg, PH1BV L10
+\newcommand{\fdRmseMed}{2.956}                  % deg, PH1BV L11
+\newcommand{\fdBiasFrac}{0.645}                 % PH1BV L12
+\newcommand{\fdSplit}{1.985}                    % deg, PH1BV L15, median CRLB
+\newcommand{\fdWellRmse}{3.812}                 % deg, PH1BV L17
+\newcommand{\fdWellBias}{1.217}                 % deg, PH1BV L17
+\newcommand{\fdWellScat}{1.540}                 % deg, PH1BV L17
+\newcommand{\fdWellFrac}{0.415}                 % PH1BV L17
+\newcommand{\fdWellEff}{3.19}                   % x, PH1BV L17
+\newcommand{\fdIllRmse}{7.775}                  % deg, PH1BV L18
+\newcommand{\fdIllBias}{5.470}                  % deg, PH1BV L18
+\newcommand{\fdIllScat}{1.642}                  % deg, PH1BV L18
+\newcommand{\fdIllFrac}{0.894}                  % PH1BV L18
+\newcommand{\fdIllEff}{0.68}                    % x, PH1BV L18
+\newcommand{\fdBiasGrowth}{4.5}                 % x, 5.470/1.217 = 4.495
+\newcommand{\fdScatGrowth}{7}                   % %, 1.642/1.540 = 1.066
+\newcommand{\fdSubN}{268}                       % PH1BV L20, RMSE below own CRLB
+\newcommand{\fdSubPct}{26.6}                    % %,  PH1BV L20
+\newcommand{\fdSubFrac}{0.884}                  % PH1BV L21, their bias fraction
+\newcommand{\fdRestFrac}{0.508}                 % PH1BV L21, everyone else
+\newcommand{\fdBiasCos}{0.536}                  % PH1BV L27, mag-weighted mean cos
+\newcommand{\fdPin}{0.836}                      % PH1BV L28, mag-weighted P(inward)
+\newcommand{\fdPinUnw}{0.712}                   % PH1BV L29, unweighted
+
+% ---- Phase 2, two-jammer resolvability (PH2) -------------------------------
+\newcommand{\phTwoN}{10{,}000}                  % PH2 L4, two-jammer samples
+\newcommand{\resRate}{62.1}                     % %,  PH2 L5, both within Delta/3
+\newcommand{\swapRate}{0.2}                     % %,  PH2 L6, Hungarian swaps
+\newcommand{\errOverSep}{0.155}                 % PH2 L8; 0.50 = midpoint collapse
+\newcommand{\resNearEq}{65.1}                   % %,  PH2 L11, |dJNR| <= 5 dB
+\newcommand{\nNearEq}{3{,}073}                  % PH2 L11
+\newcommand{\resDisp}{57.4}                     % %,  PH2 L12, |dJNR| > 15 dB
+\newcommand{\nDisp}{2{,}560}                    % PH2 L12
+\newcommand{\resCross}{68}                      % deg, PH2 L33, 50% crossing
+\newcommand{\resSepLo}{9.9}                     % %,  PH2 L17, 15-20 deg band
+\newcommand{\resSepHi}{77.4}                    % %,  PH2 L31, 85-90 deg band
+
+% ---- Phase 3J, multi-jammer degradation (PH3J) -----------------------------
+\newcommand{\jTwoN}{20{,}000}                   % PH3J L9
+\newcommand{\jTwoPfifty}{11.86}                 % deg, PH3J L9
+\newcommand{\jTwoPninety}{29.49}                % deg, PH3J L9
+\newcommand{\jTwoRmse}{18.01}                   % deg, PH3J L9
+\newcommand{\jThreeN}{30{,}000}                 % PH3J L10
+\newcommand{\jThreePfifty}{15.26}               % deg, PH3J L10
+\newcommand{\jThreePninety}{34.27}              % deg, PH3J L10
+\newcommand{\jThreeRmse}{21.35}                 % deg, PH3J L10
+\newcommand{\resThreeJ}{14.0}                   % %,  PH3J L12
+\newcommand{\closestPairMed}{48.9}              % deg, PH3J L13
+\newcommand{\nThreeJnull}{2{,}000}              % PH3J L15
+\newcommand{\jsrThreeJmean}{9.91}               % dB, PH3J L16
+\newcommand{\jsrThreeJmed}{7.93}                % dB, PH3J L16
+\newcommand{\pJsrThreeJten}{43.2}               % %,  PH3J L17
+
+% ---- Phase 3.5, dynamic range (PH35) ---------------------------------------
+% Target and interferer roles must be separated: pooling cancels the asymmetry.
+\newcommand{\drN}{20{,}000}                     % PH35 L4, target/interferer points
+\newcommand{\drWeakRmse}{25.62}                 % deg, PH35 L15, dJNR <= -10 dB
+\newcommand{\drStrongRmse}{7.82}                % deg, PH35 L16, dJNR >= +10 dB
+\newcommand{\drAsym}{3.28}                      % x,  PH35 L17
+\newcommand{\drSlopeMeas}{+0.051}               % dB/dB, PH35 L21, network
+\newcommand{\drSlopePred}{+1.000}               % dB/dB, PH35 L21, unbiased law
+\newcommand{\drPlateau}{26.2}                   % deg, PH35 L24, saturation level
+\newcommand{\drPlateauOnset}{-15}               % dB, PH35 L24
+\newcommand{\drBandLo}{21.10}                   % deg, PH35 L7, -30..-20 p50
+\newcommand{\drBandHi}{4.26}                    % deg, PH35 L13, +20..+30 p50
+\newcommand{\drEvalPop}{78.0}                   % %,  PH35 L41, eval-split cells
+\newcommand{\drGridScenes}{18{,}000}            % PH35 L42, synthesised scenes
+\newcommand{\drGridDrawn}{1{,}500{,}000}        % PH35 L42, candidates drawn
+
+% ---- Phase 4, suppression (PH4) --------------------------------------------
+\newcommand{\jsrN}{4{,}000}                     % PH4 L6, 1J samples
+\newcommand{\jsrCap}{50}                        % dB, PH4 L4, hardware ceiling
+\newcommand{\jsrMed}{27.71}                     % dB, PH4 L7
+\newcommand{\jsrPten}{19.77}                    % dB, PH4 L7
+\newcommand{\jsrPninety}{37.71}                 % dB, PH4 L7
+\newcommand{\pJsrTen}{98.6}                     % %,  PH4 L8
+\newcommand{\pJsrTwenty}{89.3}                  % %,  PH4 L9
+\newcommand{\pJsrThirty}{37.3}                  % %,  PH4 L10
+\newcommand{\jsrErrOne}{34.24}                  % dB, PH4 L11, arc err <= 1 deg
+\newcommand{\jsrErrFive}{28.21}                 % dB, PH4 L13, arc err <= 5 deg
+\newcommand{\jsrTwoJweak}{6.54}                 % dB, PH4 L17, weak target
+\newcommand{\jsrTwoJstrong}{24.20}              % dB, PH4 L17, strong target
+
+% ---- Phase 5, interpretability (PH5) ---------------------------------------
+\newcommand{\phFiveQueries}{60{,}000}           % PH5 L5
+\newcommand{\uniformEntropy}{2.303}             % nats, PH5 L21, ln(10)
+\newcommand{\attnEntropyMax}{0.001}             % nats, PH5 L21-24, worst head
+\newcommand{\probeMassMin}{0.915}               % PH5 L22, lowest of the 4 heads
+\newcommand{\scaleMass}{0.000}                  % PH5 L21-24, every head
+\newcommand{\pearsonOneJmed}{-0.691}            % PH5 L30, r(log p, softmax w)
+\newcommand{\pearsonOneJfrac}{0.965}            % PH5 L30, fraction with r < 0
+\newcommand{\spearmanOneJmed}{-0.643}           % PH5 L30
+\newcommand{\pearsonAllMed}{-0.480}             % PH5 L29, all 60,000 queries
+\newcommand{\pearsonAllFrac}{0.891}             % PH5 L29
+\newcommand{\pArgmaxArgmin}{0.511}              % PH5 L40, chance 0.125
+\newcommand{\pArgminNearest}{0.697}             % PH5 L42, probe physics alone
+\newcommand{\hullPfifty}{10.120}                % deg, PH5 L47, anchor alone
+\newcommand{\hullOffPfifty}{9.726}              % deg, PH5 L48, anchor + offset
+\newcommand{\recSixMove}{0.394}                 % deg, PH5 L51, offset contribution
+\newcommand{\transformerAdd}{6.009}             % deg, PH5 L52, refiner contribution
+
+% =========================================================================
+% Appended: values needed by the multi-jammer, dynamic-range, suppression
+% and stage-decomposition sections. \providecommand is used so that a name
+% already bound above keeps its original definition.
+% =========================================================================
+
+% ---- derived sector geometry (analytic, not measured) ----------------------
+\providecommand{\sectorRadius}{28.6}            % deg, sqrt((2pi/8)/pi) rad
+\providecommand{\subsectorRadius}{17.9}         % deg, sqrt((2pi/64)/pi) rad
+
+% ---- scene counts ----------------------------------------------------------
+\providecommand{\phOneN}{10{,}000}              % PH1 / PH3J J=1 scenes
+\providecommand{\phTwoN}{10{,}000}              % PH2 scenes
+\providecommand{\jTwoN}{20{,}000}               % PH3J J=2 per-jammer estimates
+\providecommand{\jThreeN}{30{,}000}             % PH3J J=3 per-jammer estimates
+\providecommand{\decompN}{10{,}000}             % PH5 J=1 queries
+
+% ---- Phase 2 extras --------------------------------------------------------
+\providecommand{\resRate}{62.1}
+\providecommand{\swapRate}{0.2}
+\providecommand{\errOverSep}{0.155}
+\providecommand{\resNearEq}{65.1}
+\providecommand{\nNearEq}{3{,}073}
+\providecommand{\resDisp}{57.4}
+\providecommand{\nDisp}{2{,}560}
+\providecommand{\resCross}{68}
+\providecommand{\resSepLo}{9.9}
+\providecommand{\resSepHi}{77.4}
+
+% ---- Phase 3J extras -------------------------------------------------------
+\providecommand{\resThreeJ}{14.0}               % %, PH3J L12
+\providecommand{\nThreeJnull}{2{,}000}          % PH3J L15
+\providecommand{\jsrThreeJmean}{9.91}           % dB, PH3J L16
+\providecommand{\pJsrThreeJten}{43.2}           % %, PH3J L17
+
+% ---- Phase 3.5 extras ------------------------------------------------------
+\providecommand{\drN}{20{,}000}
+\providecommand{\drAsym}{3.28}
+\providecommand{\drBandLo}{21.10}               % deg, p50, -30..-20 dB band
+\providecommand{\drBandHi}{4.26}                % deg, p50, +20..+30 dB band
+\providecommand{\drEvalPop}{78.0}               % %, cells with n >= 5
+\providecommand{\drGridScenes}{18{,}000}
+\providecommand{\drGridDrawn}{1{,}500{,}000}
+
+% ---- Phase 4 extras --------------------------------------------------------
+\providecommand{\jsrN}{4{,}000}
+\providecommand{\jsrPten}{19.77}
+\providecommand{\pJsrTen}{98.6}
+\providecommand{\pJsrThirty}{37.3}
+\providecommand{\jsrErrOne}{34.24}
+\providecommand{\jsrErrFive}{28.21}
+\providecommand{\jsrTwoJstrong}{24.20}
+\providecommand{\jsrErrThree}{29.17}            % dB, PH4 L12
+\providecommand{\nJsrErrOne}{423}               % PH4 L11
+\providecommand{\nJsrErrThree}{1{,}735}         % PH4 L12
+\providecommand{\nJsrErrFive}{2{,}376}          % PH4 L13
+\providecommand{\jsrSepFar}{14.04}              % dB, PH4, separation >= 60 deg
+\providecommand{\jsrSepNear}{17.76}             % dB, PH4, separation < 30 deg
+\providecommand{\jsrHeatEval}{61.3}             % %, PH4 heatmap eval coverage
+\providecommand{\jsrTwoJgridWeak}{8.69}         % dB, PH4 synthesised grid
+\providecommand{\jsrTwoJgridStrong}{25.18}      % dB, PH4 synthesised grid
+
+% ---- stage decomposition (PH5; interpretability section was cut) -----------
+\providecommand{\hullPninety}{20.460}           % deg, PH5 L47
+\providecommand{\hullOffPninety}{22.054}        % deg, PH5 L48

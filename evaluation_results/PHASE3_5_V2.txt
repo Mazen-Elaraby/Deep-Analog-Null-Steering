@@ -1,0 +1,53 @@
+======================================================================
+PHASE 3.5 (v2): DYNAMIC RANGE, TARGET vs INTERFERER
+======================================================================
+20,000 target/interferer data points from 10,000 two-jammer samples
+
+         dJNR band       n      p50     RMSE      p90
+        -30 to -20   1,177    21.10    26.23    40.95
+        -20 to -10   3,290    20.85    25.41    38.49
+         -10 to -5   2,460    17.86    22.22    33.70
+          -5 to +5   6,146    12.56    17.12    26.52
+         +5 to +10   2,460     7.45    10.43    15.89
+        +10 to +20   3,290     4.95     7.98    13.32
+        +20 to +30   1,177     4.26     7.35    12.96
+
+  weak target   (dJNR <= -10 dB): RMSE 25.62 deg
+  strong target (dJNR >= +10 dB): RMSE 7.82 deg
+  -> asymmetry factor 3.28x
+     A pooled analysis cancels this asymmetry, which is why the
+     roles have to be separated before quoting a dynamic-range result.
+
+  measured weak-target slope: +0.051 dB of error per dB of spread, against +1.000 predicted by Section III
+
+  THE NETWORK DOES NOT FOLLOW THE -1 dB/dB LAW.
+  Its weak-target error SATURATES at 26.2 deg RMSE beyond about -15 dB
+  of spread instead of diverging. That is the expected
+  behaviour of a biased estimator: the -1 dB/dB law bounds
+  any UNBIASED estimator, and Phase B confirmed it on the
+  CRLB itself, but once the weak target's information
+  vanishes the network falls back to a bounded sector-scale
+  guess rather than diverging. The plateau sits at the
+  scale of the sector anchor the architecture falls back
+  on, which is corroborating rather than coincidental.
+
+  So the law is a statement about the bound, not a
+  prediction for this estimator. Both belong in the paper,
+  and the figure contrasts them directly.
+
+----------------------------------------------------------------------
+HEATMAP COVERAGE
+----------------------------------------------------------------------
+  eval split : 468/600 populated at n >= 5 (78.0%), median cell n = 22
+  [grid] 18,000 scenes retained from 721,819 feasible candidates (1,500,000 drawn)
+  [grid] cached to grid_2j_djnr_sep.npz
+  synthesised: 600/600 populated at n >= 5 (100.0%), median cell n = 60
+  36,000 target records from 18,000 synthesised 2J scenes
+  Statistics above are unchanged: they remain measured on the
+  eval split. Only the map is re-sampled, so a grey cell now
+  means physically unreachable rather than merely never drawn.
+
+figures
+  wrote phase3.5/phase3_5_error_heatmap.pdf and .png
+  heatmap cells rendered: 600/600
+  wrote phase3.5/phase3_5_dynamic_range.pdf and .png

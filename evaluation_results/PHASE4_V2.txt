@@ -1,0 +1,27 @@
+======================================================================
+PHASE 4 (v2): JAMMER SUPPRESSION
+======================================================================
+JSR capped at 50 dB (finite hardware dynamic range), floored at 0.
+
+  1J samples evaluated: 4,000 (0 near-zenith degenerate)
+  JSR  median 27.71 dB, p10 19.77, p90 37.71
+    P(JSR >= 10 dB) = 98.6%
+    P(JSR >= 20 dB) = 89.3%
+    P(JSR >= 30 dB) = 37.3%
+    median JSR when arc error <= 1 deg: 34.24 dB  (n=423)
+    median JSR when arc error <= 3 deg: 29.17 dB  (n=1,735)
+    median JSR when arc error <= 5 deg: 28.21 dB  (n=2,376)
+  wrote phase4/phase4_jsr_vs_error.pdf and .png
+
+  2J samples evaluated: 4,000 (8,000 target evaluations)
+  mean JSR   weak target 6.54 dB, strong target 24.20 dB
+  mean JSR   separation >= 60 deg: 14.04 dB, < 30 deg: 17.76 dB
+
+  heatmap coverage
+    eval split : 368/600 populated at n >= 5 (61.3%), median cell n = 10
+  [grid] reusing grid_2j_djnr_sep.npz
+    synthesised: 600/600 populated at n >= 5 (100.0%), median cell n = 60
+    36,000 target evaluations from 18,000 synthesised 2J scenes
+    mean JSR   weak target 8.69 dB, strong target 25.18 dB  (grid, uniform over the plane)
+  wrote phase4/phase4_2_jsr_heatmap.pdf and .png
+  heatmap cells rendered: 600/600

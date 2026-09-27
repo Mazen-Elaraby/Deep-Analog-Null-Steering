@@ -1,0 +1,27 @@
+======================================================================
+PHASE 1 (v2): SINGLE-JAMMER ACCURACY
+======================================================================
+samples: 10,000
+  arc error   p50 3.717  p90 12.843  RMSE 7.072 deg
+  zenith      p50 3.140  p90 11.478 deg
+  azimuth     p50 2.163  p90 6.462 deg
+  theta range of predictions: [6.62, 85.83] deg  (no folding needed, rec #5)
+
+computing CRLB ...
+  1,500 bounds, median 5.020 deg, p10 0.920, p90 15.130
+  RMS of the bound 9.464 deg (quadrature aggregation)
+  RMSE / RMS(CRLB) = 0.75x
+
+  well-conditioned half (CRLB <= 5.02 deg):
+    RMSE 3.932 deg vs RMS(CRLB) 2.040 deg -> 1.93x
+  ill-conditioned half (CRLB > 5.02 deg):
+    RMSE 9.234 deg vs RMS(CRLB) 13.228 deg -> 0.70x   (below 1 means the regulariser is biasing, not violating)
+
+  CRLB at JNR<30 dB : 6.059 deg
+  CRLB at JNR>40 dB : 5.831 deg   -> flat, as Phase B predicts
+  network RMSE  JNR<30 7.240 deg,  JNR>40 7.114 deg
+
+figures
+  wrote phase1/phase1_spatial_map.pdf and .png
+  wrote phase1/phase1_error_cdf.pdf and .png
+  wrote phase1/phase1_jnr_efficiency.pdf and .png

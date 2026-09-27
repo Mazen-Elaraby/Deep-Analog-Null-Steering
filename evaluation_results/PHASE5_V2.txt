@@ -1,0 +1,57 @@
+======================================================================
+PHASE 5 (v2): EXPLAINABILITY -- WHAT EACH BRANCH READS
+======================================================================
+
+queries: 60,000   (1J 10,000 / 2J 20,000 / 3J 30,000)
+sequence length 10 = CLS + scale token + 8 probes
+
+[self-test] manual recomposition vs forward(): max|diff| = 0.000e+00
+[self-test] attention rows sum to 1: max deviation 2.204e-07
+
+----------------------------------------------------------------------
+1) BRANCH B: where the CLS token looks (mean over queries)
+----------------------------------------------------------------------
+    head      CLS   SCALE      P1      P2      P3      P4      P5      P6      P7      P8
+       0   0.0000  0.0000  0.1250  0.0000  0.2494  0.1269  0.0000  0.0000  0.0000  0.4987
+       1   0.0853  0.0000  0.1753  0.0227  0.0000  0.1736  0.2688  0.0007  0.0775  0.1961
+       2   0.0000  0.0000  0.1158  0.1550  0.1140  0.1454  0.0886  0.1499  0.0838  0.1476
+       3   0.0000  0.0000  0.0646  0.1540  0.2730  0.0000  0.0511  0.1238  0.2805  0.0529
+
+    per-head summary
+    head 0: probe mass 1.000, scale token 0.000, CLS self 0.000, entropy 0.000 nats (uniform would be 2.303)
+    head 1: probe mass 0.915, scale token 0.000, CLS self 0.085, entropy 0.001 nats (uniform would be 2.303)
+    head 2: probe mass 1.000, scale token 0.000, CLS self 0.000, entropy 0.001 nats (uniform would be 2.303)
+    head 3: probe mass 1.000, scale token 0.000, CLS self 0.000, entropy 0.000 nats (uniform would be 2.303)
+
+----------------------------------------------------------------------
+2) BRANCH A: soft-argmin test, r(probe log-power, softmax weight)
+----------------------------------------------------------------------
+    all queries  n=60,000  Pearson mean -0.431 median -0.480  frac<0 0.891  |  Spearman median -0.548
+    1 jammer     n=10,000  Pearson mean -0.603 median -0.691  frac<0 0.965  |  Spearman median -0.643
+    2 jammers    n=20,000  Pearson mean -0.435 median -0.488  frac<0 0.897  |  Spearman median -0.571
+    3 jammers    n=30,000  Pearson mean -0.372 median -0.404  frac<0 0.863  |  Spearman median -0.500
+
+    the probes notch at their own centre, so a soft-argmin
+    anchor requires r(p, w) < 0.
+    -> strongly NEGATIVE: the anchor reads the notch.
+    Branch A is behaving as a genuine soft-argmin.
+
+    1J readout diagnostics (chance = 0.125)
+      P(argmax w == argmin p)      = 0.511
+      P(argmax w == nearest centre) = 0.490
+      P(argmin p == nearest centre) = 0.697   (probe physics, no network involved)
+
+----------------------------------------------------------------------
+3) DECOMPOSITION: hull, hull+offset (rec #6), final
+----------------------------------------------------------------------
+    hull only              p50  10.120  p90  20.460  mean  11.173 deg
+    hull + offset          p50   9.726  p90  22.054  mean  11.345 deg
+    final output           p50   3.717  p90  12.843  mean   5.404 deg
+
+    rec #6 moves the anchor by +0.394 deg (median),
+    the transformer correction adds a further +6.009 deg.
+  wrote phase5/phase5_attention_heads.pdf and .png
+  wrote phase5/phase5_branch_a_readout.pdf and .png
+  wrote phase5/phase5_decomposition.pdf and .png
+
+done.
